@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Element Content</title>
+	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-6">
+				<div class="row">
+					<div class="border border-dark rounded pt-3" style="min-height:635px">
+						<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+							<div class="alert alert-primary" role="alert">
+							  <h5 class="alert-heading">Screen Capture!</h5>
+							  <p>Captures the content of Screen/Window/Tab as video. Click Start/Stop to tryout.</p>
+							</div>
+							<button id="screen-start" type="button" class="btn btn-outline-primary me-3">Start Recording</button>
+							<button id="screen-stop" type="button" class="btn btn-outline-danger" disabled>Stop Recording</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="row">
+					<div class="border border-dark rounded pt-3" style="min-height:635px">			
+						<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+							<div class="alert alert-success" role="alert">
+							  <h5 class="alert-heading">Element Recording!</h5>
+							  <p>Captures the content of selected HTML element as video. Click Start/Stop to tryout.</p>
+							</div>
+							<button id="element-start" type="button" class="btn btn-outline-primary me-3">Start Recording</button>
+							<button id="element-stop" type="button" class="btn btn-outline-danger" disabled>Stop Recording</button>
+						</div>
+						<div id="content" class="mt-3">
+							<h4>Plania Products</h4>
+							<p class="h6 ">A FDV system that can be adapted to your needs</p>
+							<div class="carousel slide" data-bs-ride="carousel">
+								<div class="carousel-inner">
+									<div class="carousel-item active" data-bs-interval="500">
+										<div class="alert alert-primary" role="alert">
+										  <h6 class="alert-heading">Plania DV - Operation and maintenance</h6>	
+										  <div class="card" style="width: 18rem;">
+											 <img class="card-img-top" src="images/adobestock_220313319.jpeg" alt="Card image cap">	
+										  </div>
+										  <hr>
+										  <p class="mb-0">Plania DV gives you control over who has done what and when.void decay, be proactive and get an operation and maintenance operation that secures the value of the property.</p>
+										</div>
+									</div>
+									<div class="carousel-item" data-bs-interval="500">
+										<div class="alert alert-primary" role="alert">
+										  <h6 class="alert-heading">Plania EF - Property Management</h6>	
+										  <div class="card" style="width: 18rem;">
+											 <img class="card-img-top" src="images/adobestock_316779169.jpeg" alt="Card image cap">	
+										  </div>
+										  <hr>
+										  <p class="mb-0">Plania EF gives you overview and control over all contracts and space allocations. With Plania EF you get efficient and correct handling of invoicing, regulation and reporting.</p>
+										</div>
+									</div>
+									<div class="carousel-item" data-bs-interval="500">
+										<div class="alert alert-primary" role="alert">
+										  <h6 class="alert-heading">Plania IV - Industrial maintenance</h6>	
+										  <div class="card" style="width: 18rem;">
+											 <img class="card-img-top" src="images/adobestock_423471579.jpeg" alt="Card image cap">	
+										  </div>
+										  <hr>
+										  <p class="mb-0">Plania IV optimizes the maintenance process, reduces the number of unplanned production stops and provides efficient management of the parts inventory.</p>
+										</div>
+									</div>
+									<div class="carousel-item" data-bs-interval="500">
+										<div class="alert alert-primary" role="alert">
+										  <h6 class="alert-heading">Plania DF - Data capture</h6>	
+										  <div class="card" style="width: 18rem;">
+											 <img class="card-img-top" src="images/adobestock_220313319.jpeg" alt="Card image cap">	
+										  </div>
+										  <hr>
+										  <p class="mb-0">Plania DV gives you control over who has done what and when.void decay, be proactive and get an operation and maintenance operation that secures the value of the property.</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>  
+
+    <script>
+		let mediaRecorder;
+		let recordedChunks = [];
+		const screenRecName = "screen-recording.webm"
+		const elementRecName = "element-recording.webm"
+		const startScreenBtnId = "screen-start"
+		const stopScreenBtnId = "screen-stop"
+		const startElementBtnId = "element-start"
+		const stopElementBtnId = "element-stop"
+		
+		const displayMediaOptions = {
+		  video: {
+			displaySurface: "window",
+		  },
+		  audio: false,
+		};
+		
+		// Set event listeners for the start and stop buttons
+		document.getElementById(startScreenBtnId).addEventListener("click", 
+				function(){					
+					startScreenRecord();
+					document.getElementById(startScreenBtnId).disabled = true;
+					document.getElementById(stopScreenBtnId).disabled = false;
+				},
+			false,
+		);
+
+		document.getElementById(stopScreenBtnId).addEventListener("click",
+				function() {
+					stopScreenRecord();
+					document.getElementById(startScreenBtnId).disabled = false;
+					document.getElementById(stopScreenBtnId).disabled = true;
+				},
+			false,
+		);
+		
+		document.getElementById(startElementBtnId).addEventListener('click', 
+				function() {
+					startElementRecord();
+					document.getElementById(startElementBtnId).disabled = true;
+					document.getElementById(stopElementBtnId).disabled = false;
+				}, 
+			false );
+
+        document.getElementById(stopElementBtnId).addEventListener('click', 
+				function(){
+					stopElementRecord();
+					document.getElementById(startElementBtnId).disabled = false;
+					document.getElementById(stopElementBtnId).disabled = true;
+				},
+			false );
+			
+		
+		async function startRecording(getStreamCallback, recordingName) {
+			try {
+				const stream = await getStreamCallback();
+				initializeMediaRecorder(stream, recordingName);
+			} catch (err) {
+				console.error("Error starting recording:", err);
+			}
+		}
+
+		function initializeMediaRecorder(stream, recordingName) {
+			mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+			recordedChunks = [];
+
+			mediaRecorder.ondataavailable = (event) => {
+				if (event.data.size > 0) {
+					recordedChunks.push(event.data);
+				}
+			};
+
+			mediaRecorder.onstop = () => {
+				saveRecording(recordingName);
+			};
+
+			mediaRecorder.start();
+		}
+
+		function saveRecording(recordingName) {
+			const blob = new Blob(recordedChunks, { type: 'video/webm' });
+			const url = URL.createObjectURL(blob);
+
+			const a = document.createElement('a');
+			a.style.display = 'none';
+			a.href = url;
+			a.download = recordingName;
+			document.body.appendChild(a);
+			a.click();
+
+			// Clean up
+			URL.revokeObjectURL(url);
+			recordedChunks = [];
+		}
+
+		async function startScreenRecord() {
+			await startRecording(async () => {
+				return navigator.mediaDevices.getDisplayMedia({ displayMediaOptions });
+			}, screenRecName);
+		}
+
+		async function startElementRecord() {
+			const content = document.getElementById('content');
+			const canvas = document.createElement('canvas');
+			const ctx = canvas.getContext('2d');
+
+			const { width, height } = content.getBoundingClientRect();
+			canvas.width = width;
+			canvas.height = height;
+
+			await startRecording(() => canvas.captureStream(30), elementRecName);
+			captureFrames(content, ctx, canvas);
+		}	
+		
+		function stopScreenRecord(evt) {
+			if (mediaRecorder && mediaRecorder.state !== "inactive") {
+				mediaRecorder.stop();
+			}
+		}
+		
+		async function stopElementRecord() {
+			if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+		}
+		
+		async function captureFrames(contnt, context, canvs) {
+			if (mediaRecorder.state === 'inactive') return;
+
+			const snapshot = await html2canvas(contnt);
+			context.clearRect(0, 0, canvs.width, canvs.height);
+			context.drawImage(snapshot, 0, 0, canvs.width, canvs.height);
+
+			requestAnimationFrame(() => captureFrames(contnt, context, canvs));
+		}
+    </script>
+</body>
+</html>
